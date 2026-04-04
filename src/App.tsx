@@ -42,15 +42,15 @@ type Row = {
 };
 
 const defaultInputs: Inputs = {
-  rentMonthly: '72000',
-  rentMgmtMonthly: '2000',
-  rentRenewalFee: '72000',
-  purchasePrice: '32800000',
+  rentMonthly: '100000',
+  rentMgmtMonthly: '0',
+  rentRenewalFee: '100000',
+  purchasePrice: '24900000',
   purchaseFeeRatePct: '10',
   downPayment: '15000000',
-  annualInterestRatePct: '0.60',
+  annualInterestRatePct: '1',
   loanYears: '35',
-  ownershipMonthlyFee: '39000',
+  ownershipMonthlyFee: '36000',
   propertyTaxAnnual: '100000',
   fireInsurancePer5Years: '100000',
   saleCostRatePct: '4',
@@ -277,40 +277,6 @@ function App() {
               </div>
             ))}
           </div>
-          <div className="table-wrap">
-            <table className="year-table">
-              <thead>
-                <tr>
-                  <th>年</th>
-                  <th>判定</th>
-                  <th>累計差額</th>
-                  <th>購入住居コスト</th>
-                  <th>賃貸累計</th>
-                  <th>売却後手残り</th>
-                  <th>残債</th>
-                  <th>年平均実質負担</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.rows.map((row) => (
-                  <tr key={row.year}>
-                    <td>{row.year}年</td>
-                    <td>
-                      <span className={`chip ${row.cumulativeDifferenceVsRent < 0 ? 'chip-negative' : 'chip-neutral'}`}>
-                        {diffLabel(row.cumulativeDifferenceVsRent)}
-                      </span>
-                    </td>
-                    <td className={valueClass(row.cumulativeDifferenceVsRent)}>{fmtYen(row.cumulativeDifferenceVsRent)}</td>
-                    <td className={valueClass(row.housingCost)}>{fmtYen(row.housingCost)}</td>
-                    <td>{fmtYen(row.cumulativeRent)}</td>
-                    <td className={valueClass(row.finalNetProceeds)}>{fmtYen(row.finalNetProceeds)}</td>
-                    <td>{fmtYen(row.remainingBalance)}</td>
-                    <td className={valueClass(row.averageAnnualHousingCost)}>{fmtYen(row.averageAnnualHousingCost)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </Panel>
 
         <div className="charts-grid charts-grid-top">
@@ -371,6 +337,45 @@ function App() {
               </LineChart>
             </ResponsiveContainer>
           </ChartWrap>
+        </Panel>
+
+        <Panel title="年次テーブル" desc="表示年数ぶんを一覧で確認。スマホでは横スクロール。">
+          <div className="table-wrap">
+            <table className="year-table">
+              <thead>
+                <tr>
+                  <th>年</th>
+                  <th>判定</th>
+                  <th>累計差額</th>
+                  <th>購入住居コスト</th>
+                  <th>賃貸累計</th>
+                  <th>売却価格</th>
+                  <th>売却後手残り</th>
+                  <th>残債</th>
+                  <th>年平均実質負担</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.rows.map((row) => (
+                  <tr key={row.year}>
+                    <td>{row.year}年</td>
+                    <td>
+                      <span className={`chip ${row.cumulativeDifferenceVsRent < 0 ? 'chip-negative' : 'chip-neutral'}`}>
+                        {diffLabel(row.cumulativeDifferenceVsRent)}
+                      </span>
+                    </td>
+                    <td className={valueClass(row.cumulativeDifferenceVsRent)}>{fmtYen(row.cumulativeDifferenceVsRent)}</td>
+                    <td className={valueClass(row.housingCost)}>{fmtYen(row.housingCost)}</td>
+                    <td>{fmtYen(row.cumulativeRent)}</td>
+                    <td>{fmtYen(row.salePriceAfterCost)}</td>
+                    <td className={valueClass(row.finalNetProceeds)}>{fmtYen(row.finalNetProceeds)}</td>
+                    <td>{fmtYen(row.remainingBalance)}</td>
+                    <td className={valueClass(row.averageAnnualHousingCost)}>{fmtYen(row.averageAnnualHousingCost)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Panel>
       </div>
     </div>
