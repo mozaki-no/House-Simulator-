@@ -213,9 +213,6 @@ function App() {
       <div className="container">
         <header className="page-header">
           <h1>住居コスト比較シミュレーター</h1>
-          <p>
-            普通シナリオ一本で、単年キャッシュ負担と売却込みの実質コストを分けて見る版。スマホでも見やすい構成。
-          </p>
         </header>
 
         <section className="section-grid inputs-grid">
@@ -279,6 +276,40 @@ function App() {
                 <DataLine label="年平均実質負担" value={fmtYen(row.averageAnnualHousingCost)} number={row.averageAnnualHousingCost} />
               </div>
             ))}
+          </div>
+          <div className="table-wrap">
+            <table className="year-table">
+              <thead>
+                <tr>
+                  <th>年</th>
+                  <th>判定</th>
+                  <th>累計差額</th>
+                  <th>購入住居コスト</th>
+                  <th>賃貸累計</th>
+                  <th>売却後手残り</th>
+                  <th>残債</th>
+                  <th>年平均実質負担</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.rows.map((row) => (
+                  <tr key={row.year}>
+                    <td>{row.year}年</td>
+                    <td>
+                      <span className={`chip ${row.cumulativeDifferenceVsRent < 0 ? 'chip-negative' : 'chip-neutral'}`}>
+                        {diffLabel(row.cumulativeDifferenceVsRent)}
+                      </span>
+                    </td>
+                    <td className={valueClass(row.cumulativeDifferenceVsRent)}>{fmtYen(row.cumulativeDifferenceVsRent)}</td>
+                    <td className={valueClass(row.housingCost)}>{fmtYen(row.housingCost)}</td>
+                    <td>{fmtYen(row.cumulativeRent)}</td>
+                    <td className={valueClass(row.finalNetProceeds)}>{fmtYen(row.finalNetProceeds)}</td>
+                    <td>{fmtYen(row.remainingBalance)}</td>
+                    <td className={valueClass(row.averageAnnualHousingCost)}>{fmtYen(row.averageAnnualHousingCost)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Panel>
 
