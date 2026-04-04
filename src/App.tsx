@@ -86,6 +86,21 @@ function parseNumber(value: string) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function formatNumberInput(value: string) {
+  if (!value) return '';
+
+  const normalized = value.replace(/,/g, '');
+  const sign = normalized.startsWith('-') ? '-' : '';
+  const unsigned = sign ? normalized.slice(1) : normalized;
+  const [integerPart, decimalPart] = unsigned.split('.');
+
+  const withCommas = (integerPart || '0').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  if (unsigned.endsWith('.')) return `${sign}${withCommas}.`;
+  if (decimalPart !== undefined) return `${sign}${withCommas}.${decimalPart}`;
+  return `${sign}${withCommas}`;
+}
+
 function pmt(rate: number, nper: number, pv: number) {
   if (nper <= 0) return 0;
   if (rate === 0) return -(pv / nper);
@@ -370,11 +385,13 @@ function Field({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const displayValue = formatNumberInput(value);
+
   return (
     <label className="field">
       <span className="field-label">{label}</span>
       {hint ? <span className="field-hint">{hint}</span> : null}
-      <input value={value} onChange={(e) => onChange(e.target.value)} inputMode="decimal" />
+      <input value={displayValue} onChange={(e) => onChange(e.target.value.replace(/,/g, ''))} inputMode="decimal" />
     </label>
   );
 }
