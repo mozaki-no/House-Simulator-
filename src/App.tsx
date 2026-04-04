@@ -35,6 +35,7 @@ type Row = {
   remainingBalance: number;
   salePriceAfterCost: number;
   finalNetProceeds: number;
+  downPaymentRecovered: number;
   housingCost: number;
   averageAnnualHousingCost: number;
   cumulativeDifferenceVsRent: number;
@@ -157,6 +158,7 @@ function App() {
       const cumulativePurchaseCash = purchaseAnnualCash * year;
       const salePriceAfterCost = purchasePrice * Math.pow(1 + baseRate, year) * (1 - saleCostRate);
       const finalNetProceeds = salePriceAfterCost - remainingBalance;
+      const downPaymentRecovered = Math.min(downPayment, Math.max(0, finalNetProceeds));
       const housingCost = downPayment + purchaseFees + cumulativePurchaseCash - finalNetProceeds;
       const averageAnnualHousingCost = housingCost / year;
       const cumulativeDifferenceVsRent = housingCost - cumulativeRent;
@@ -169,6 +171,7 @@ function App() {
         remainingBalance,
         salePriceAfterCost,
         finalNetProceeds,
+        downPaymentRecovered,
         housingCost,
         averageAnnualHousingCost,
         cumulativeDifferenceVsRent,
@@ -344,15 +347,46 @@ function App() {
             <table className="year-table">
               <thead>
                 <tr>
-                  <th>年</th>
-                  <th>判定</th>
-                  <th>累計差額</th>
-                  <th>購入住居コスト</th>
-                  <th>賃貸累計</th>
-                  <th>売却価格</th>
-                  <th>売却後手残り</th>
-                  <th>残債</th>
-                  <th>年平均実質負担</th>
+                  <th>
+                    <span className="table-heading">年</span>
+                    <span className="table-subheading">保有してからの年数</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">判定</span>
+                    <span className="table-subheading">その時点で賃貸か購入のどちらが有利か</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">累計差額</span>
+                    <span className="table-subheading">購入住居コスト - 賃貸累計</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">購入住居コスト</span>
+                    <span className="table-subheading">頭金・諸費用・維持費から売却後手残りを差し引き</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">賃貸累計</span>
+                    <span className="table-subheading">家賃・管理費・更新料の累計</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">売却価格</span>
+                    <span className="table-subheading">価格変動と売却コストを反映した想定額</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">売却後手残り</span>
+                    <span className="table-subheading">売却価格 - 残債</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">頭金回収額</span>
+                    <span className="table-subheading">手残りのうち頭金として戻せた分</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">残債</span>
+                    <span className="table-subheading">その年に売る場合のローン残高</span>
+                  </th>
+                  <th>
+                    <span className="table-heading">年平均実質負担</span>
+                    <span className="table-subheading">購入住居コストを年平均した額</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -369,6 +403,7 @@ function App() {
                     <td>{fmtYen(row.cumulativeRent)}</td>
                     <td>{fmtYen(row.salePriceAfterCost)}</td>
                     <td className={valueClass(row.finalNetProceeds)}>{fmtYen(row.finalNetProceeds)}</td>
+                    <td>{fmtYen(row.downPaymentRecovered)}</td>
                     <td>{fmtYen(row.remainingBalance)}</td>
                     <td className={valueClass(row.averageAnnualHousingCost)}>{fmtYen(row.averageAnnualHousingCost)}</td>
                   </tr>
